@@ -1,0 +1,130 @@
+Zach Forster
+CS260
+
+/**********************************/
+/* Original ERD */
+
+ut_customer
+	(cust_id PK NN INT, 
+	cust_first VARCHAR(30), 
+	cust_mi VARCHAR(1), 
+	cust_last VARCHAR(30), 
+	cust_addr1 VARCHAR(30), 
+	cust_addr2 VARCHAR(30), 
+	cust_city VARCHAR(30), 
+	cust_state VARCHAR(2), 
+	cust_zip VARCHAR(15))
+
+ut_meter
+	(meter_id PK NN INT, 
+	meter_type VARCHAR(30))
+
+ut_property
+	(property_id PK NN INT, 
+	property_addr1 VARCHAR(30),
+	property_addr2 VARCHAR(30), 
+	property_city VARCHAR(30), 
+	property_state VARCHAR(2), 
+	property_zip VARCHAR(15),
+	cust_id FK NN INT,
+	meter_id FK INT)
+
+ut_commercial_property
+	(comm_id (PK FK NN) INT, 
+	comm_enterprise_zone BOOLEAN,
+	comm_bus_type VARCHAR(30))
+	
+ut_residential_property
+	(res_id (PK FK NN) INT, 
+	res_subsidy DECIMAL(6,5), 
+	res_dwelling_type VARCHAR(30))
+
+ut_meter_reading
+	(reading_id PK NN INT, 
+	reading_date DATE, 
+	reading_value DECIMAL(6,1),
+	meter_id FK NN INT)
+
+ut_bill
+	(bill_id PK NN INT, 
+	bill_start_date DATE, 
+	bill_end_date DATE,
+	property_id FK NN INT)
+	
+	
+/**********************************/
+/* Modified ERD */
+
+ut_customer
+	(cust_id PK NN INT, 
+	cust_first VARCHAR(30), 
+	cust_mi VARCHAR(1), 
+	cust_last VARCHAR(30), 
+	cust_addr1 VARCHAR(30), 
+	cust_addr2 VARCHAR(30), 
+	cust_city VARCHAR(30), 
+	cust_state VARCHAR(2), 
+	cust_zip VARCHAR(15))
+
+ut_meter
+	(meter_id PK NN INT, 
+	meter_type VARCHAR(30))
+
+ut_commercial_property
+	(comm_id (PK FK NN) INT, 
+	comm_enterprise_zone BOOLEAN,
+	comm_bus_type VARCHAR(30),
+	comm_addr1 VARCHAR(30),
+	comm_addr2 VARCHAR(30), 
+	comm_city VARCHAR(30), 
+	comm_state VARCHAR(2), 
+	comm_zip VARCHAR(15),
+	cust_id FK NN INT,
+	meter_id FK INT)
+	
+ut_residential_property
+	(res_id (PK FK NN) INT, 
+	res_subsidy DECIMAL(6,5), 
+	res_dwelling_type VARCHAR(30),
+	res_addr1 VARCHAR(30),
+	res_addr2 VARCHAR(30), 
+	res_city VARCHAR(30), 
+	res_state VARCHAR(2), 
+	res_zip VARCHAR(15),
+	cust_id FK NN INT,
+	meter_id FK INT)
+
+ut_meter_reading
+	(reading_id PK NN INT, 
+	reading_date DATE, 
+	reading_value DECIMAL(6,1),
+	meter_id FK NN INT)
+
+ut_bill
+	(bill_id PK NN INT, 
+	bill_start_date DATE, 
+	bill_end_date DATE,
+	res_id FK INT,
+	comm_id FK INT)
+	
+	
+/***********************************************/
+/* Comparison */
+
+From what I could see, there was only one real benefit to the
+modified design in this specific case.  That benefit, of course,
+was to remove one of the tables from the database.  Granted, tables
+do take up lots of space, especially if the database is very large,
+but frankly, this is not enough of a benefit to justify the design
+in my eyes.  The first thing that I noticed was the fact that the 
+ER diagram looked much more cluttered.  This alone could make the 
+database more difficult to understand for anyone who had to familiarize
+themselves with it.  Second, there was lots of duplicated data, which
+actually uses up some of the space that was saved by removing a table,
+partially nullifying that benefit.  The largest issue, however, was the
+fact that PROPERTY_ID was a foreign key in the UT_BILL table.  After 
+UT_PROPERTY was removed, UT_BILL had to have two foreign keys:  COMM_ID
+and RES_ID.  The issue here was the fact that one of the two foreign keys
+would always be NULL, and that does nothing but waste space and clutter
+up the table.  Overall, in this database, I would always pick the 
+Generalization/Specialization relationship over the alternative.

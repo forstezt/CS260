@@ -1,0 +1,22 @@
+CREATE OR REPLACE PROCEDURE CHECK_DIVER 
+  (CURR_DIVER_ID IN NUMBER, CURR_MEET_ID IN NUMBER) 
+AS
+  required_dives diver_meet.meet_number_dives%TYPE;
+  curr_num_dives NUMBER;
+  e_invalid_number_of_dives EXCEPTION;
+BEGIN
+
+  SELECT COUNT(*) INTO curr_num_dives
+  FROM diver_meet_dive JOIN diver_meet
+  ON diver_meet_dive.meet_id = diver_meet.meet_id
+  WHERE diver_id = curr_diver;
+    
+  IF curr_num_dives < required_dives THEN
+    RAISE e_invalid_number_of_dives;
+  END IF;
+  EXCEPTION
+    WHEN e_invalid_number_of_dives THEN
+    DBMS_OUTPUT.PUT_LINE('***** ERROR: DIVER DOES NOT HAVE THE REQUIRED NUMBER OF DIVES FOR MEET*********************');
+    DBMS_OUTPUT.PUT_LINE('**********11 dives required, diver has 10*********************');    
+
+END CHECK_DIVER;

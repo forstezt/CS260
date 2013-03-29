@@ -1,0 +1,16 @@
+CREATE OR REPLACE PROCEDURE VALIDATE_DIVE_LIST 
+  (curr_meet_id IN diver_meet.meet_id%TYPE)
+AS
+  CURSOR diver_cursor IS
+    SELECT diver_id FROM diver_diver;
+  curr_diver_id diver_cursor%ROWTYPE;
+BEGIN
+  SELECT meet_number_dives INTO required_dives FROM diver_meet
+  WHERE curr_meet_id = meet_id;
+  
+  FOR curr_diver_id IN diver_cursor
+  LOOP
+    EXECUTE check_driver(curr_diver_id, curr_meet_id);
+  END LOOP;
+  
+END VALIDATE_DIVE_LIST;
